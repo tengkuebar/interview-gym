@@ -1,0 +1,406 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f6f4ef;
+  --surface: #ffffff;
+  --ink: #1f2a27;
+  --ink-muted: #5e6b64;
+  --line: #e2ded3;
+  --accent: #7a9e8b;
+  --on-accent: #10201a;
+  --accent-text: #4a7160;
+  --soft: #e9efea;
+  --worked-bg: #dce8e0;
+  --worked-ink: #1f4535;
+  --try-bg: #f2ddd0;
+  --try-ink: #6b3a22;
+  --danger-ink: #8a3b2a;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --dur-press: 140ms;
+  --dur-fast: 160ms;
+  --dur-base: 220ms;
+  --dur-exit: 140ms;
+}
+
+:root[data-theme="dark"] {
+  --bg: #141a17;
+  --surface: #1c2420;
+  --ink: #e9eeea;
+  --ink-muted: #93a39a;
+  --line: #2a342f;
+  --accent: #8db9a2;
+  --on-accent: #0e1a14;
+  --accent-text: #8db9a2;
+  --soft: #222d27;
+  --worked-bg: #243a30;
+  --worked-ink: #b5dcc8;
+  --try-bg: #3a2c24;
+  --try-ink: #e8c2a8;
+  --danger-ink: #e8a090;
+}
+
+/* Keep in sync with the [data-theme="dark"] block above. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141a17;
+    --surface: #1c2420;
+    --ink: #e9eeea;
+    --ink-muted: #93a39a;
+    --line: #2a342f;
+    --accent: #8db9a2;
+    --on-accent: #0e1a14;
+    --accent-text: #8db9a2;
+    --soft: #222d27;
+    --worked-bg: #243a30;
+    --worked-ink: #b5dcc8;
+    --try-bg: #3a2c24;
+    --try-ink: #e8c2a8;
+    --danger-ink: #e8a090;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--ink-muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-accent-text: var(--accent-text);
+  --color-soft: var(--soft);
+  --color-worked-bg: var(--worked-bg);
+  --color-worked-ink: var(--worked-ink);
+  --color-try-bg: var(--try-bg);
+  --color-try-ink: var(--try-ink);
+  --color-danger: var(--danger-ink);
+  --font-sans: var(--font-dm-sans), system-ui, sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+
+/* Pressable: scale on press, never transition: all */
+.press {
+  transition:
+    transform var(--dur-press) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    opacity var(--dur-fast) var(--ease-out),
+    filter var(--dur-fast) var(--ease-out);
+}
+.press:active {
+  transform: scale(0.97);
+}
+@media (hover: hover) and (pointer: fine) {
+  /* Outlined controls get a border hint; filled CTAs darken instead. */
+  .press:not(.cta):hover {
+    border-color: var(--accent-text);
+  }
+  .cta:hover {
+    filter: brightness(0.96);
+  }
+}
+
+/* Message entrance: transitions via @starting-style, interruptible */
+.bubble-in {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out);
+  @starting-style {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink-muted);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+.dot:nth-child(2) {
+  animation-delay: 150ms;
+}
+.dot:nth-child(3) {
+  animation-delay: 300ms;
+}
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Voice mode orb. Colours come from the theme tokens so light and dark both work. */
+[data-phase] {
+  --ob: color-mix(in srgb, var(--accent) 38%, var(--bg));
+  --o1: var(--accent);
+  --o2: color-mix(in srgb, var(--accent) 28%, var(--surface));
+  --o3: var(--accent-text);
+  --og: 0 0 70px color-mix(in srgb, var(--accent) 30%, transparent);
+  --oa: orb-breathe 4s ease-in-out infinite;
+}
+[data-phase="listening"] {
+  --ob: color-mix(in srgb, var(--accent) 55%, var(--bg));
+  --og: 0 0 90px color-mix(in srgb, var(--accent) 45%, transparent);
+  --oa: orb-listen 1.6s ease-in-out infinite;
+}
+[data-phase="thinking"] {
+  --ob: color-mix(in srgb, var(--accent) 30%, var(--bg));
+  --og: 0 0 40px color-mix(in srgb, var(--accent) 20%, transparent);
+  --oa: orb-breathe 2.2s ease-in-out infinite;
+}
+[data-phase="speaking"] {
+  --ob: color-mix(in srgb, #6fa8a0 45%, var(--bg));
+  --o1: #6fa8a0;
+  --o2: color-mix(in srgb, #6fa8a0 30%, var(--surface));
+  --o3: #3f7a72;
+  --og: 0 0 90px color-mix(in srgb, #6fa8a0 45%, transparent);
+  --oa: orb-speak 1.3s ease-in-out infinite;
+}
+[data-phase="muted"],
+[data-phase="blocked"],
+[data-phase="error"] {
+  --ob: color-mix(in srgb, var(--line) 80%, var(--bg));
+  --o1: color-mix(in srgb, var(--line) 90%, var(--ink-muted));
+  --o2: var(--line);
+  --o3: color-mix(in srgb, var(--line) 70%, var(--bg));
+  --og: none;
+  --oa: none;
+}
+.orb-level {
+  position: absolute;
+  inset: 0;
+  transition: transform 90ms linear;
+}
+.orb-core {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--ob);
+  box-shadow: var(--og);
+  animation: var(--oa);
+  transition:
+    background-color 300ms var(--ease-out),
+    box-shadow 300ms var(--ease-out);
+}
+.orb-blob {
+  position: absolute;
+  width: 72%;
+  height: 72%;
+  border-radius: 45% 55% 60% 40%;
+  background: var(--o1);
+  filter: blur(18px);
+  animation: orb-morph 6s ease-in-out infinite alternate;
+  transition: background-color 300ms var(--ease-out);
+}
+.orb-blob.b2 {
+  left: 30%;
+  top: 28%;
+  background: var(--o2);
+  animation-duration: 7.5s;
+  animation-direction: alternate-reverse;
+}
+.orb-blob.b3 {
+  left: -6%;
+  top: 32%;
+  width: 58%;
+  height: 58%;
+  background: var(--o3);
+  animation-duration: 9s;
+}
+.orb-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--accent-text);
+  opacity: 0;
+  pointer-events: none;
+  animation: orb-ring 2.4s var(--ease-out) infinite;
+}
+.orb-spin {
+  animation: orb-spin 2.2s linear infinite;
+}
+.orb-count {
+  stroke-dashoffset: 779;
+  animation: orb-count linear forwards;
+}
+@keyframes orb-morph {
+  0% {
+    transform: translate(-10%, -6%) rotate(0deg) scale(1);
+  }
+  100% {
+    transform: translate(18%, 14%) rotate(180deg) scale(1.15);
+  }
+}
+@keyframes orb-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+@keyframes orb-listen {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.06);
+  }
+  60% {
+    transform: scale(1.02);
+  }
+}
+@keyframes orb-speak {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.07);
+  }
+  50% {
+    transform: scale(0.97);
+  }
+  75% {
+    transform: scale(1.05);
+  }
+}
+@keyframes orb-ring {
+  from {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.55);
+  }
+}
+@keyframes orb-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes orb-count {
+  from {
+    stroke-dashoffset: 779;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Speaking indicator: five bars that rise and fall while the character's voice plays */
+.eq-bar {
+  width: 3px;
+  height: 18px;
+  border-radius: 2px;
+  background: var(--accent);
+  transform-origin: center;
+  animation: eq-bar 0.9s ease-in-out infinite;
+}
+@keyframes eq-bar {
+  0%,
+  100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+/* Ring that pulses outward from the mic button while recording */
+.mic-live::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 2px solid var(--try-ink);
+  opacity: 0;
+  pointer-events: none;
+  animation: mic-ring 1.4s var(--ease-out) infinite;
+}
+@keyframes mic-ring {
+  from {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.4);
+  }
+}
+
+/* Step marker entrance in the report progress list */
+.step-in {
+  animation: step-in var(--dur-fast) var(--ease-out) both;
+}
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+/* Estimated progress: steady run to 90% at 20s, then holds until the report arrives */
+.progress-fill {
+  transform: scaleX(0);
+  animation: progress-run 20s linear forwards;
+}
+@keyframes progress-run {
+  to {
+    transform: scaleX(0.9);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .press,
+  .bubble-in {
+    transition: none;
+  }
+  .bubble-in {
+    @starting-style {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .dot {
+    animation: none;
+    opacity: 0.6;
+  }
+  .step-in,
+  .mic-live::after,
+  .eq-bar,
+  .orb-blob,
+  .orb-ring,
+  .orb-core {
+    animation: none;
+  }
+  .orb-spin {
+    animation-duration: 6s;
+  }
+}

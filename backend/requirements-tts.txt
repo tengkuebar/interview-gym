@@ -1,0 +1,3 @@
+# Optional: Kokoro text-to-speech (runs on CPU). Needs espeak-ng installed on the system.
+kokoro>=0.9.4
+soundfile>=0.12

@@ -1,0 +1,22 @@
+﻿# Generated, large or personal. Never committed.
+dist/
+build/
+backend/.venv/
+backend/data/
+backend/**/__pycache__/
+*.pyc
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/tsconfig.tsbuildinfo
+.env
+.env.*
+*.db
+
+# Local tooling and notes
+.claude/
+frontend/.claude/
+
+# OS
+.DS_Store
+Thumbs.db
